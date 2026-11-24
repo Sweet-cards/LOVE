@@ -1,12 +1,11 @@
 const $=s=>document.querySelector(s);
 const penguinSay=document.getElementById('penguin-say');
 let penguinSwapTimer;
-function penguinTalk(text,speak){
+function penguinTalk(text){
   clearTimeout(penguinSwapTimer);
   penguinSay.classList.remove('swap');
   penguinSay.textContent=text;
   penguinSay.setAttribute('aria-atomic','true');
-  if(speak&&'speechSynthesis' in window){const u=new SpeechSynthesisUtterance(speak===true?text:speak);u.lang='es-PE';speechSynthesis.cancel();speechSynthesis.speak(u)}
 }
 const lightsButton=$('#lights'),partyButton=$('#party'),card=$('#card'),intro=$('#intro'),envelope=$('#envelope'),invitation=$('#invitation'),yesButton=$('#yes'),noButton=$('#no'),hint=$('#hint'),room=$('.room'),dedications=$('#dedications'),flowers=$('#flowers'),musicBtn=$('#music');
 
@@ -22,59 +21,27 @@ introTimers.push(setTimeout(()=>say('\u00a1Hey!'),3000));
 introTimers.push(setTimeout(()=>say('Est\u00e1 oscuro aqu\u00ed...'),7000));
 introTimers.push(setTimeout(()=>{say('\u00bfPuedes prender la luz?');lightsButton.hidden=false;hint.hidden=false},9000));
 
-/* Musica alegre sintetizada (sin archivos) */
-let ctx,master,playing=false,loopTimer;
-const BPM=92,STEP=60/BPM/2;
-/* Vals suave y alegre (compás de 3/4), melodía original: C Am Dm G | C Em F G */
-const BASS=[130.81,110,146.83,98,130.81,82.41,87.31,98];
-const PAH=[[261.63,329.63,392],[261.63,329.63,440],[293.66,349.23,440],[293.66,392,493.88],[261.63,329.63,392],[246.94,329.63,392],[261.63,349.23,440],[293.66,392,493.88]];
-const MEL=[
- 659.25,0,783.99,0,880,783.99,
- 659.25,0,0,0,523.25,0,
- 587.33,0,698.46,0,880,0,
- 783.99,0,0,0,587.33,0,
- 659.25,0,783.99,0,1046.5,880,
- 783.99,0,659.25,0,0,0,
- 698.46,0,880,0,698.46,587.33,
- 493.88,0,587.33,0,0,0];
-function initAudio(){
-  ctx=new(window.AudioContext||window.webkitAudioContext)();
-  master=ctx.createGain();
-  const dry=ctx.createGain(),wet=ctx.createGain(),dl=ctx.createDelay(1),fb=ctx.createGain(),lp=ctx.createBiquadFilter();
-  dry.gain.value=.85;wet.gain.value=.3;dl.delayTime.value=.33;fb.gain.value=.35;lp.type='lowpass';lp.frequency.value=2200;
-  master.connect(dry).connect(ctx.destination);
-  master.connect(dl);dl.connect(lp);lp.connect(fb);fb.connect(dl);lp.connect(wet).connect(ctx.destination);
-}
-function note(f,t,d,type,v,a=.01){
-  const o=ctx.createOscillator(),g=ctx.createGain();
-  o.type=type;o.frequency.value=f;
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);
-  g.gain.exponentialRampToValueAtTime(.0008,t+d);
-  o.connect(g).connect(master);o.start(t);o.stop(t+d+.05);
-}
-function playLoop(){
-  if(!playing)return;
-  const t0=ctx.currentTime+.1;
-  for(let s=0;s<48;s++){
-    const t=t0+s*STEP,bar=(s/6)|0,st=s%6;
-    if(st===0){note(BASS[bar],t,STEP*4,'triangle',.09);note(BASS[bar]*2,t,STEP*3,'sine',.03)}
-    if(st===2||st===4)PAH[bar].forEach(f=>note(f,t,STEP*2.2,'triangle',.022));
-    if(st===5)note(PAH[bar][2]*2,t,STEP*2.5,'sine',.018);
-    if(MEL[s])note(MEL[s],t,STEP*(st===0||st===4?3.2:2.4),'triangle',.065,.015);
-  }
-  loopTimer=setTimeout(playLoop,(48*STEP-.1)*1000);
-}
+/* Música de fondo cargada desde assets */
+const backgroundMusic=$('#background-music');
+let playing=false;
+backgroundMusic.volume=.55;
 function toggleMusic(on){
-  try{
-    if(!ctx)initAudio();
-    if(ctx.state==='suspended')ctx.resume();
-    playing=on;clearTimeout(loopTimer);
-    master.gain.cancelScheduledValues(ctx.currentTime);
-    master.gain.setTargetAtTime(on?1:0,ctx.currentTime,.05);
-    musicBtn.classList.toggle('muted',!on);
-    musicBtn.setAttribute('aria-label',on?'Silenciar m\u00fasica':'Activar m\u00fasica');
-    if(on)playLoop();
-  }catch(e){}
+  if(on){
+    backgroundMusic.play().then(()=>{
+      playing=true;
+      musicBtn.classList.remove('muted');
+      musicBtn.setAttribute('aria-label','Silenciar música');
+    }).catch(()=>{
+      playing=false;
+      musicBtn.classList.add('muted');
+      musicBtn.setAttribute('aria-label','Activar música');
+    });
+    return;
+  }
+  backgroundMusic.pause();
+  playing=false;
+  musicBtn.classList.add('muted');
+  musicBtn.setAttribute('aria-label','Activar música');
 }
 musicBtn.addEventListener('click',()=>toggleMusic(!playing));
 musicBtn.classList.add('muted');
@@ -84,13 +51,13 @@ lightsButton.addEventListener('click',()=>{
   clearTimeout(sayTimer);
   clearTimeout(invitationTimer);
   document.body.classList.add('lights-on');
-  penguinTalk('Hola Hardy, soy Doffi',true);
+  penguinTalk('Hola Hardy, soy Doffi');
   clearTimeout(sayTimer);intro.classList.remove('show');intro.textContent='';
   hint.hidden=true;lightsButton.hidden=true;
   if(!playing)toggleMusic(true);
   invitationTimer=setTimeout(()=>{
     invitation.hidden=true;
-    penguinTalk('Tengo una carta de Susan para ti, jeje. ¿Quieres leerla?',true);
+    penguinTalk('Tengo una carta de Susan para ti, jeje. ¿Quieres leerla?');
     invitation.hidden=false;
   },4000);
 });
@@ -114,7 +81,7 @@ yesButton.addEventListener('click',()=>{
   invitation.hidden=true;noButton.hidden=true;document.body.classList.add('sunset');envelope.hidden=false;
   room.insertBefore(penguinSay,envelope.nextSibling);
   penguinSay.classList.add('envelope-prompt');
-  penguinTalk('\u00c1brela, jeje',true);
+  penguinTalk('\u00c1brela, jeje');
   hint.textContent='Toca la carta para abrirla.';hint.hidden=false;
 });
 
