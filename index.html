@@ -1,1 +1,202 @@
-hola
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10152f">
+  <title>Una sorpresa para nuestros 11 meses</title>
+  <style>
+    :root { color-scheme:dark; --ink:#fff8e9; --gold:#ffd36b; --pink:#ff8eae; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; overflow-x:hidden; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:#050509; transition:background-color 1s,color 1s; }
+    body.lights-on { color:#46354e; background-color:#17152f; background-image:url("assets/Nubes bajo el atardecer compu.png"); background-position:center; background-size:cover; background-attachment:fixed; }
+    body.dedication-mode, body.flower-mode { color:#fff8e9; background:#050509; background-image:none; }
+    main { position:relative; z-index:1; min-height:100vh; display:grid; place-items:center; padding:30px 18px 80px; text-align:center; }
+    .room { width:min(100%,680px); }
+    .decoration { position:fixed; z-index:0; visibility:hidden; opacity:0; pointer-events:none; user-select:none; transition:opacity 1s; }
+    .lights-on .decoration { visibility:visible; opacity:1; }
+    .scene-character { position:fixed; z-index:0; left:50%; bottom:clamp(8px,2vh,24px); width:clamp(210px,38vw,390px); display:grid; justify-items:center; transform:translateX(-50%); visibility:hidden; opacity:0; pointer-events:none; user-select:none; transition:opacity 1s; }
+    .scene-penguin { display:block; width:100%; max-height:54vh; object-fit:contain; object-position:bottom center; filter:drop-shadow(0 8px 16px #24183b55); }
+    .penguin-greeting { margin:0 0 8px; padding:10px 18px; border:2px solid #fff; border-radius:22px; color:#49374f; background:#fffaf2; box-shadow:0 6px 20px #24183b44; font-weight:800; font-size:clamp(1rem,3vw,1.3rem); white-space:nowrap; opacity:0; transform:translateY(8px) scale(.94); transition:opacity .45s,transform .45s; }
+    .lights-on .scene-character { visibility:visible; opacity:1; }
+    .lights-on .penguin-greeting { opacity:1; transform:translateY(0) scale(1); transition-delay:.45s; }
+    .dedication-mode .scene-character, .flower-mode .scene-character { visibility:hidden; opacity:0; }
+    .balloon { top:18%; width:clamp(95px,20vw,190px); animation:float 4s ease-in-out infinite; }
+    .balloon.left { left:1%; }.balloon.right { right:1%; animation-delay:-2s; }
+    .flag { top:0; width:min(34vw,270px); }.flag.left { left:0; }.flag.right { right:0; transform:scaleX(-1); }
+    .intro { min-height:2em; margin:0 0 22px; color:#c9c9e6; font-size:clamp(1.1rem,4vw,1.55rem); line-height:1.7; opacity:0; transition:opacity .6s; }
+    .intro.show { opacity:1; }
+    .lights-on .intro { color:#795d80; }
+    .lamp { display:block; width:clamp(100px,24vw,150px); height:clamp(100px,24vw,150px); margin:12px auto 4px; padding:12px; border:0; border-radius:50%; background:transparent; cursor:pointer; filter:drop-shadow(0 0 24px #ffe39a99); animation:swing 3s ease-in-out infinite alternate; transform-origin:top center; }
+    .lamp img { display:block; width:100%; height:100%; object-fit:contain; }
+    .lamp:hover { filter:drop-shadow(0 0 38px #ffe39aff); }
+    [hidden] { display:none!important; }
+    @keyframes appear { from { opacity:0 } to { opacity:1 } }
+    @keyframes swing { to { transform:rotate(5deg) } }
+    .card { position:relative; overflow:hidden; margin:22px auto; padding:clamp(22px,6vw,38px); max-width:540px; border:1px solid #ffffff45; border-radius:28px; background:#ffffff0b; box-shadow:0 18px 60px #05081955; backdrop-filter:blur(8px); opacity:0; transform:translateY(14px) scale(.98); transition:opacity .8s,transform .8s,background .8s; }
+    .lights-on .card { background:#fff9f0d9; border-color:#fff; box-shadow:0 18px 60px #75547a24; }
+    .card-confetti { position:absolute; inset:-16%; width:132%; height:132%; object-fit:contain; opacity:.45; pointer-events:none; }
+    .card-content { position:relative; z-index:1; }
+    .card.show { opacity:1; transform:translateY(0) scale(1); }
+    .gift-button { display:flex; align-items:center; justify-content:center; gap:10px; margin:18px auto 0; padding:14px 26px!important; border:2px solid #ffe08a!important; color:#49374f!important; background:linear-gradient(135deg,#ffe08a,#ff83b4)!important; box-shadow:0 0 28px #ff83b477,0 10px 30px #0008; font-size:1.08rem!important; }
+    .gift-button img { width:30px; height:30px; object-fit:contain; }
+    .cake-wrap { position:relative; width:clamp(100px,32vw,165px); height:clamp(100px,32vw,165px); margin:0 auto; animation:float 2.5s ease-in-out infinite; }
+    .cake { display:block; width:100%; height:100%; object-fit:contain; }
+    .party-hat { position:absolute; top:-17%; left:55%; width:38%; height:44%; object-fit:contain; transform:rotate(15deg); }
+    @keyframes float { 50% { transform:translateY(-7px) } }
+    .recipient { margin:14px 0; color:var(--pink); font-size:clamp(1.7rem,7vw,2.7rem); font-weight:850; }
+    .lights-on .recipient { color:#b85076; }
+    .message { margin:10px auto 0; max-width:410px; font-size:1.08rem; line-height:1.8; }
+    .signature { margin:22px 0 0; color:#ffcf7b; font-style:italic; }
+    .lights-on .signature { color:#94659a; }
+    .lights-on .intro { width:fit-content; max-width:min(92%,520px); margin:0 auto 16px; padding:13px 20px; border:2px solid #fff; border-radius:24px; color:#694e70; background:#fff8f0ed; box-shadow:0 8px 25px #35224244; }
+    .invitation { display:flex; justify-content:center; gap:14px; margin:18px auto; }
+    .invitation button { min-width:100px; }
+    .primary { border:0!important; color:#49374f!important; background:linear-gradient(135deg,#ffe08a,#ff9db8)!important; box-shadow:0 8px 25px #ff9db833; }
+    #no { touch-action:manipulation; }
+    .envelope-button { display:block; margin:8px auto 14px; padding:0!important; border:0!important; border-radius:22px!important; background:transparent!important; box-shadow:0 12px 32px #27133788; animation:appear .8s ease both; }
+    .envelope-button img { display:block; width:min(410px,82vw); max-height:56vh; object-fit:contain; border-radius:22px; }
+    .envelope-button:hover { transform:translateY(-5px) scale(1.02)!important; }
+    .lights-on.show-letter .envelope-button { display:none!important; }
+    .actions { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin-top:25px; }
+    .button-icon { width:22px; height:22px; vertical-align:middle; object-fit:contain; }
+    button:not(.lamp) { padding:13px 20px; border:1px solid #ffffff50; border-radius:999px; color:#fff; background:#ffffff15; font:inherit; font-weight:750; cursor:pointer; transition:transform .15s,background .2s; }
+    button:not(.lamp):hover { transform:translateY(-2px); background:#ffffff28; }
+    button:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
+    .primary:hover { background:linear-gradient(135deg,#ffe9ab,#ffb2c8); }
+    .hint { margin:17px 0 0; color:#c3c0dc; font-size:.9rem; }
+    .lights-on .hint { color:#806d87; }
+    .confetti { position:fixed; z-index:2; top:-24px; pointer-events:none; animation:fall linear forwards; }
+    @keyframes fall { to { transform:translateY(110vh) rotate(720deg); opacity:.85 } }
+    .dedications, .flowers { width:min(100%,760px); margin:auto; padding:clamp(22px,6vw,48px) 18px; animation:appear .8s ease both; }
+    .dedications h2, .flowers h2 { color:#ffd36b; font-size:clamp(1.8rem,7vw,3rem); }
+    .dedication-note { margin:18px auto; padding:22px; border:1px solid #ffb3d366; border-radius:22px; background:linear-gradient(145deg,#ffffff12,#ff9ec512); box-shadow:0 12px 36px #0007; text-align:left; }
+    .dedication-note h3 { margin:0 0 10px; color:#ffabc9; }
+    .dedication-note p { margin:0; min-height:3em; line-height:1.8; white-space:pre-wrap; }
+    .flowers { display:flex; min-height:100vh; flex-direction:column; align-items:center; justify-content:center; }
+    .garden { display:flex; align-items:flex-end; justify-content:center; gap:clamp(8px,5vw,42px); width:100%; height:clamp(250px,55vh,430px); }
+    .lily { position:relative; width:clamp(82px,22vw,150px); height:88%; }
+    .stem { position:absolute; bottom:0; left:50%; width:7px; height:68%; border-radius:9px; background:linear-gradient(90deg,#24643d,#85c96a,#24643d); transform:rotate(var(--lean,0deg)); transform-origin:bottom; }
+    .leaf { position:absolute; bottom:26%; left:50%; width:clamp(35px,10vw,70px); height:22px; border-radius:100% 0 100% 0; background:linear-gradient(135deg,#9bd765,#287345); transform:rotate(var(--leaf-angle)); transform-origin:left center; }
+    .bloom { position:absolute; top:3%; left:50%; width:100%; aspect-ratio:1; transform:translateX(-50%); }
+    .petal { position:absolute; left:50%; top:50%; width:34%; height:56%; border-radius:55% 55% 48% 48%; background:linear-gradient(180deg,#fffdf6,#ffe4f0 75%,#f2a9c8); box-shadow:inset 0 0 12px #ffffffaa; transform-origin:50% 90%; transform:translate(-50%,-90%) rotate(var(--angle)) scale(.08); }
+    .flowers.open .petal { animation:open-petal .9s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:var(--delay); }
+    @keyframes open-petal { to { transform:translate(-50%,-90%) rotate(var(--angle)) scale(1); } }
+    .pollen { position:absolute; z-index:2; top:47%; left:50%; width:15%; aspect-ratio:1; border-radius:50%; background:#f9c944; box-shadow:0 0 16px #ffd56a; transform:translate(-50%,-50%) scale(0); }
+    .flowers.open .pollen { animation:appear .5s ease 1.1s forwards; }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important } }
+    @media (max-width:600px) { .balloon { top:8%; width:clamp(70px,19vw,115px); opacity:.78; } .flag { width:38vw; } }
+    @media (max-width:600px) { body.lights-on { background-image:url("assets/Nubes bajo el atardecer celu.png"); } .scene-character { bottom:calc(8px + env(safe-area-inset-bottom,0px)); width:clamp(210px,60vw,300px); } .scene-penguin { max-height:42vh; } }
+    #music { position:fixed; z-index:6; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); width:48px; height:48px; padding:0!important; display:grid; place-items:center; color:#49374f!important; background:#ffffffd9!important; }
+    #music svg { width:24px; height:24px; fill:currentColor }
+    #music .off { display:none } #music.muted .on { display:none } #music.muted .off { display:inline }
+    .confetti { top:-24px }
+    .invitation button { color:#fff!important; background:#111!important; border:1px solid #111!important; box-shadow:0 6px 18px #0006!important; }
+    .invitation button:hover { background:#333!important; }
+    .dedications { overflow:hidden }
+    .carousel { display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding:6px 7%; scrollbar-width:none; -webkit-overflow-scrolling:touch }
+    .carousel::-webkit-scrollbar { display:none }
+    .dedication-note { flex:0 0 86%; margin:0!important; scroll-snap-align:center; min-height:220px; opacity:.45; transform:scale(.94); transition:opacity .4s,transform .4s }
+    .dedication-note.active { opacity:1; transform:none }
+    .dedication-note .r { visibility:hidden }
+    .car-ctrl { display:flex; align-items:center; justify-content:center; gap:16px; margin:16px 0 22px }
+    .car-ctrl button { width:44px; height:44px; padding:0!important; font-size:1.8rem; line-height:1; color:#fff!important; background:#111!important; border:1px solid #ffffff55!important }
+    .car-ctrl button:disabled { opacity:.35; cursor:default; transform:none!important }
+    #dots { display:flex; gap:8px }
+    .dot { width:10px!important; height:10px!important; padding:0!important; border-radius:50%!important; border:0!important; background:#ffffff55!important }
+    .dot.on { background:#ffd36b!important; transform:scale(1.3) }
+    #music.muted { opacity:.85 }
+    body.dedication-mode { color:#3b2a4a; background:linear-gradient(160deg,#fff4e4 0%,#ffdfe3 55%,#dcecff 100%) fixed; }
+    .dedications { padding-top:clamp(28px,7vw,56px); }
+    .dedications h2 { margin:0 0 6px; color:#0f5c63; font-family:Georgia,'Times New Roman',serif; font-style:italic; font-weight:600; letter-spacing:.01em; }
+    .dedications h2::after { content:''; display:block; width:64px; height:4px; margin:12px auto 18px; border-radius:4px; background:linear-gradient(90deg,#ff7a6b,#1fa6a0,#8a63d2); }
+    .dedication-note { --ac:#ff7a6b; position:relative; overflow:hidden; text-align:left; padding:34px 26px 26px; color:#3b2a4a; border:0; border-radius:26px; background:#fffdf9; box-shadow:0 14px 34px #7a4f6a29; }
+    .dedication-note:nth-child(3n+2) { --ac:#1fa6a0; }
+    .dedication-note:nth-child(3n) { --ac:#8a63d2; }
+    .dedication-note::before { content:''; position:absolute; left:0; right:0; top:0; height:10px; background:var(--ac); }
+    .dedication-note::after { content:'\201C'; position:absolute; right:18px; top:6px; color:var(--ac); opacity:.18; font:700 7rem/1 Georgia,serif; pointer-events:none; }
+    .dedication-note h3 { display:inline-block; margin:0 0 14px; padding:5px 14px; border-radius:999px; color:#fff; background:var(--ac); font-size:.9rem; letter-spacing:.04em; text-transform:uppercase; }
+    .dedication-note p { position:relative; z-index:1; color:#3b2a4a; font:italic 1.2rem/1.75 Georgia,'Times New Roman',serif; }
+    .car-ctrl button { color:#0f5c63!important; background:#fff!important; border:2px solid #0f5c63!important; box-shadow:0 4px 12px #0f5c6322; }
+    .car-ctrl button:disabled { opacity:.35; }
+    .dot { background:#0f5c6340!important; }
+    .dot.on { background:#ff7a6b!important; }
+    .dedications #flowers-button { color:#fff!important; background:linear-gradient(135deg,#ff7a6b,#d9559b)!important; box-shadow:0 10px 26px #d9559b55; }
+    /* Ramo de lirios azules */
+    body.flower-mode { background:radial-gradient(ellipse at 50% 38%,#fff 0%,#e8effb 55%,#cddbf0 100%) fixed; }
+    .flowers { justify-content:flex-start; padding-top:clamp(18px,4vw,40px); overflow:hidden }
+    .flowers h2 { margin:0; color:#1f3d7a; font:italic 600 clamp(1.7rem,6.5vw,2.7rem)/1.2 Georgia,'Times New Roman',serif; text-shadow:0 2px 12px #ffffffcc; opacity:0 }
+    .flowers.open h2 { animation:fade 1.4s .3s forwards }
+    .garden { display:block!important; height:auto!important; width:min(100%,520px) }
+    .garden svg { display:block; width:100%; height:auto; max-height:82vh; overflow:visible }
+    .paper { opacity:0; transform:translateY(24px) }
+    .flowers.open .paper { animation:paper 1s ease-out var(--d) forwards }
+    .stem { fill:none; stroke:#3f7a3c; stroke-width:5; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1 }
+    .flowers.open .stem { animation:grow 1.4s ease-out var(--d) forwards }
+    .lf, .bd, .gy, .bow { transform:scale(0) }
+    .flowers.open .lf { animation:pop 1s cubic-bezier(.2,.9,.3,1) var(--d) forwards }
+    .flowers.open .bd { animation:pop .9s cubic-bezier(.3,1.4,.5,1) var(--d) forwards }
+    .flowers.open .gy { animation:pop .6s cubic-bezier(.3,1.6,.5,1) var(--d) forwards }
+    .flowers.open .bow { animation:pop .9s cubic-bezier(.3,1.6,.5,1) var(--d) forwards }
+    .petal { transform:scale(.04); opacity:0 }
+    .flowers.open .petal { animation:bloomp 1.5s cubic-bezier(.2,.9,.25,1.05) forwards; animation-delay:var(--d) }
+    .stamen { opacity:0 } .flowers.open .stamen { animation:fade .8s var(--d) forwards }
+    .sway { transform-box:view-box; transform-origin:430px 740px; animation:sway 6s ease-in-out infinite alternate }
+    @keyframes fade { to { opacity:1 } }
+    @keyframes grow { to { stroke-dashoffset:0 } }
+    @keyframes paper { to { opacity:1; transform:none } }
+    @keyframes pop { to { transform:scale(1) } }
+    @keyframes bloomp { from { transform:scale(.04) rotate(-28deg); opacity:0 } 50% { opacity:1 } to { transform:scale(1) rotate(0); opacity:1 } }
+    @keyframes sway { from { transform:rotate(-1deg) } to { transform:rotate(1deg) } }
+    .sp { position:fixed; z-index:3; width:var(--z); height:var(--z); border-radius:50%; background:#8fb8ff; box-shadow:0 0 9px #a8c8ff; pointer-events:none; opacity:0; animation:rise var(--t) ease-out forwards }
+    @keyframes rise { 0% { opacity:0; transform:translate(0,0) } 20% { opacity:.9 } 100% { opacity:0; transform:translate(var(--dx),-38vh) } }
+  </style>
+</head>
+<body>
+  <div class="scene-character" aria-live="polite">
+    <p class="penguin-greeting">Hola Hardy, soy Doffi</p>
+    <img class="scene-penguin" src="assets/Pingüino pastel con capucha de conejo.png" alt="Pingüino pastel con capucha de conejo">
+  </div>
+  <img class="decoration flag left" src="assets/flag-left.png" alt="" aria-hidden="true">
+  <img class="decoration flag right" src="assets/flag-right.png" alt="" aria-hidden="true">
+  <img class="decoration balloon left" src="assets/balloon-left.png" alt="" aria-hidden="true">
+  <img class="decoration balloon right" src="assets/balloon-right.png" alt="" aria-hidden="true">
+  <main>
+    <section class="room" aria-live="polite">
+      <p class="intro" id="intro" aria-live="polite"></p>
+      <button class="lamp" id="lights" type="button" aria-label="Prender la luz" hidden><img src="assets/bulb.svg" alt="Foquito"></button>
+      <div class="invitation" id="invitation" hidden>
+        <button class="primary" id="yes" type="button">S&#237;</button>
+        <button id="no" type="button">No </button>
+      </div>
+      <button class="envelope-button" id="envelope" type="button" aria-label="Abrir la carta" hidden><img src="assets/sobre-magico.png" alt="Una carta de Susan para ti; toca para abrirla"></button>
+      <article class="card" id="card">
+        <img class="card-confetti" src="assets/confetti.svg" alt="" aria-hidden="true">
+        <div class="card-content">
+          <div class="cake-wrap"><img class="cake" src="assets/Pareja.png" alt="Ilustración de una pareja"></div>
+          <div class="recipient" id="recipient">&#161;Felices 11 meses, mi amor!</div>
+          <p class="message">Amor mío, estos 11 meses a tu lado han sido de mis momentos más bonitos. Gracias por cada risa, cada abrazo y por quererme tal como soy. A tu lado, hasta lo más sencillo se vuelve especial. Qué suerte la mía de compartir este camino contigo. Te amo y deseo que nos esperen muchísimos meses más juntitos.</p>
+          <p class="signature">Con todo mi amor, Susan</p>
+        </div>
+      </article>
+    <div class="actions">
+        <button class="gift-button" id="party" type="button" hidden>Ver tus flores <span aria-hidden="true">💐</span></button>
+      </div>
+      <p class="hint" id="hint" hidden>Haz clic en el foquito para prenderla.</p>
+    </section>
+    <section class="dedications" id="dedications" hidden>
+      <h2>Un recuerdo de estos 11 meses</h2>
+      <div class="carousel" id="carousel"><article class="dedication-note"><h3>Mi lugar feliz</h3><p>Contigo aprendí que hogar puede ser una persona. Gracias por ser mi calma, mi alegría y ese abrazo al que siempre quiero volver.</p></article>
+      <article class="dedication-note"><h3>Mi aventura favorita</h3><p>Ya van 11 meses de historias, risas y momentos nuestros. Sueño con todo lo bonito que todavía nos queda por vivir juntitos.</p></article>
+      <article class="dedication-note"><h3>Siempre tú</h3><p>En los días fáciles y en los no tanto, quiero seguir tomándote de la mano. Te amo por quien eres y por cómo haces florecer mi corazón.</p></article></div><div class="car-ctrl"><button id="prev" type="button" aria-label="Anterior">&#8249;</button><div id="dots"></div><button id="next" type="button" aria-label="Siguiente">&#8250;</button></div>
+      <button class="primary" id="flowers-button" type="button">Ver tus flores </button>
+    </section>
+    <section class="flowers" id="flowers" hidden>
+      <h2>Para mi amor, con todo mi corazón</h2>
+      <div class="garden" id="garden" aria-label="Ramo de lirios azules"></div>
+    </section>
+<button id="music" type="button" aria-label="Activar m&uacute;sica"><svg class="on" viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h5V3z"/></svg><svg class="off" viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h5V3zM3.3 2 2 3.3l18.7 18.7 1.3-1.3z"/></svg></button>
+  </main>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
