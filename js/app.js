@@ -1,15 +1,26 @@
 const $=s=>document.querySelector(s);
+const penguinSay=document.getElementById('penguin-say');
+let penguinSwapTimer;
+function penguinTalk(text,speak){
+  clearTimeout(penguinSwapTimer);
+  penguinSay.classList.remove('swap');
+  penguinSay.textContent=text;
+  penguinSay.setAttribute('aria-atomic','true');
+  if(speak&&'speechSynthesis' in window){const u=new SpeechSynthesisUtterance(speak===true?text:speak);u.lang='es-PE';speechSynthesis.cancel();speechSynthesis.speak(u)}
+}
 const lightsButton=$('#lights'),partyButton=$('#party'),card=$('#card'),intro=$('#intro'),envelope=$('#envelope'),invitation=$('#invitation'),yesButton=$('#yes'),noButton=$('#no'),hint=$('#hint'),room=$('.room'),dedications=$('#dedications'),flowers=$('#flowers'),musicBtn=$('#music');
 
 let sayTimer;
+const introTimers=[];
+let invitationTimer;
 function say(text){
   clearTimeout(sayTimer);
   intro.classList.remove('show');
   sayTimer=setTimeout(()=>{intro.textContent=text;intro.classList.add('show')},80);
 }
-setTimeout(()=>say('\u00a1Hey!'),3000);
-setTimeout(()=>say('Est\u00e1 oscuro aqu\u00ed...'),7000);
-setTimeout(()=>{say('\u00bfPuedes prender la luz?');lightsButton.hidden=false;hint.hidden=false},9000);
+introTimers.push(setTimeout(()=>say('\u00a1Hey!'),3000));
+introTimers.push(setTimeout(()=>say('Est\u00e1 oscuro aqu\u00ed...'),7000));
+introTimers.push(setTimeout(()=>{say('\u00bfPuedes prender la luz?');lightsButton.hidden=false;hint.hidden=false},9000));
 
 /* Musica alegre sintetizada (sin archivos) */
 let ctx,master,playing=false,loopTimer;
@@ -69,21 +80,24 @@ musicBtn.addEventListener('click',()=>toggleMusic(!playing));
 musicBtn.classList.add('muted');
 
 lightsButton.addEventListener('click',()=>{
+  introTimers.forEach(clearTimeout);
+  clearTimeout(sayTimer);
+  clearTimeout(invitationTimer);
   document.body.classList.add('lights-on');
-  if('speechSynthesis' in window){
-    const greeting=new SpeechSynthesisUtterance('Hola Hardy, soy Doffi');
-    greeting.lang='es-PE';
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(greeting);
-  }
-  say('Hola, mi amor. Hoy celebramos nuestros 11 meses.');
+  penguinTalk('Hola Hardy, soy Doffi',true);
+  clearTimeout(sayTimer);intro.classList.remove('show');intro.textContent='';
   hint.hidden=true;lightsButton.hidden=true;
   if(!playing)toggleMusic(true);
-  setTimeout(()=>{say('Tengo una carta de Susan para ti, jeje. ¿Quieres leerla?');invitation.hidden=false},3000);
+  invitationTimer=setTimeout(()=>{
+    invitation.hidden=true;
+    penguinTalk('Tengo una carta de Susan para ti, jeje. ¿Quieres leerla?',true);
+    invitation.hidden=false;
+  },4000);
 });
 
 function moveNoButton(){
   const m=12,mx=Math.max(m,innerWidth-noButton.offsetWidth-m),my=Math.max(m,innerHeight-noButton.offsetHeight-m);
+  if(noButton.parentElement!==document.body)document.body.append(noButton);
   noButton.style.position='fixed';
   noButton.style.left=`${m+Math.random()*(mx-m)}px`;
   noButton.style.top=`${m+Math.random()*(my-m)}px`;
@@ -95,22 +109,29 @@ noButton.addEventListener('click',moveNoButton);
 addEventListener('resize',()=>{if(noButton.style.position==='fixed')moveNoButton()});
 
 yesButton.addEventListener('click',()=>{
+  clearTimeout(invitationTimer);
   clearTimeout(sayTimer);
-  invitation.hidden=true;envelope.hidden=false;
+  invitation.hidden=true;noButton.hidden=true;document.body.classList.add('sunset');envelope.hidden=false;
+  room.insertBefore(penguinSay,envelope.nextSibling);
+  penguinSay.classList.add('envelope-prompt');
+  penguinTalk('\u00c1brela, jeje',true);
   hint.textContent='Toca la carta para abrirla.';hint.hidden=false;
 });
 
 function confetti(){
-  const colors=['#ffd36b','#ff8eae','#ffe08a','#b8a1ff','#8fd9c8','#fff'];
-  for(let i=0;i<48;i++){
+  const colors=['#ff4d6d','#d90429','#ff758f','#ffd36b','#ffb3c1','#fff'];
+  for(let i=0;i<56;i++){
     const s=document.createElement('span');s.className='confetti';
-    const w=6+Math.random()*8;
-    s.style.cssText=`left:${Math.random()*100}vw;width:${w}px;height:${w*1.6}px;background:${colors[i%colors.length]};border-radius:2px;animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*1.2}s`;
+    const w=6+Math.random()*8,c=colors[i%colors.length];
+    const base=`left:${Math.random()*100}vw;animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*1.2}s;`;
+    if(i%2){s.textContent=i%4===1?'\u2764':'\u2665';s.style.cssText=base+`font-size:${14+Math.random()*16}px;color:${c};text-shadow:0 0 6px #fff8`}
+    else s.style.cssText=base+`width:${w}px;height:${w*1.6}px;background:${c};border-radius:2px`;
     document.body.append(s);setTimeout(()=>s.remove(),8000);
   }
 }
 envelope.addEventListener('click',()=>{
   document.body.classList.add('show-letter');
+  penguinSay.hidden=true;
   clearTimeout(sayTimer);intro.textContent='';intro.classList.remove('show');
   card.classList.add('show');hint.hidden=true;partyButton.hidden=false;confetti();
 });
@@ -143,7 +164,7 @@ partyButton.addEventListener('click',()=>{
 });
 
 $('#flowers-button').addEventListener('click',()=>{
-  document.body.classList.remove('lights-on','show-letter','dedication-mode');
+  document.body.classList.remove('lights-on','sunset','show-letter','dedication-mode');
   document.body.classList.add('flower-mode');
   room.hidden=true;dedications.hidden=true;flowers.hidden=false;
   scrollTo({top:0,behavior:'smooth'});
@@ -151,20 +172,20 @@ $('#flowers-button').addEventListener('click',()=>{
 });
 
 
-/* Ramo de lirios azules (SVG generado) */
+/* Ramo de flores rojas (SVG generado) */
 (function(){
   const f=n=>+n.toFixed(1);
   let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;
   const PET='M0 0C-30-16-46-62-20-104C-10-118 4-124 14-124C24-102 52-62 34-22C26-6 8-2 0 0Z';
-  const SPOT=[[-8,-28],[8,-34],[-14,-48],[3,-52],[-6,-68],[12,-70],[-18,-80]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.7" fill="#1f4a96" opacity=".6"/>`).join('');
+  const SPOT=[[-8,-28],[8,-34],[-14,-48],[3,-52],[-6,-68],[12,-70],[-18,-80]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.7" fill="#6d0a1c" opacity=".6"/>`).join('');
   function lily(cx,cy,rot,sc,d,more){
     let p='',s='';
-    (more?[-140,-89,-37,14,66,117,169]:[-140,-90,-40,15,70,125]).forEach((a,i)=>p+=`<g transform="rotate(${a}) scale(1 ${[1,.92,1.05,1,.95,1.02,.98][i]})"><g class="petal" style="--d:${f(d+i*.12)}s"><path d="${PET}" fill="url(#lp)" stroke="#9dc3fb" stroke-width="1.6"/><path d="M0-8C0-50 4-90 12-116" fill="none" stroke="#a9ccff" stroke-opacity=".7" stroke-width="2"/>${SPOT}</g></g>`);
+    (more?[-140,-89,-37,14,66,117,169]:[-140,-90,-40,15,70,125]).forEach((a,i)=>p+=`<g transform="rotate(${a}) scale(1 ${[1,.92,1.05,1,.95,1.02,.98][i]})"><g class="petal" style="--d:${f(d+i*.12)}s"><path d="${PET}" fill="url(#lp)" stroke="#ff9aab" stroke-width="1.6"/><path d="M0-8C0-50 4-90 12-116" fill="none" stroke="#ffc2cd" stroke-opacity=".7" stroke-width="2"/>${SPOT}</g></g>`);
     [-28,-14,0,14,28].forEach((a,i)=>{const r=a*Math.PI/180,L=46+(i%3)*8,x=Math.sin(r)*L,y=-Math.cos(r)*L;
-      s+=`<path d="M0 0L${f(x)} ${f(y)}" stroke="#dce8ff" stroke-width="1.8"/><ellipse cx="${f(x)}" cy="${f(y)}" rx="3" ry="7" transform="rotate(${a} ${f(x)} ${f(y)})" fill="#5b2a30"/>`});
+      s+=`<path d="M0 0L${f(x)} ${f(y)}" stroke="#ffe3e8" stroke-width="1.8"/><ellipse cx="${f(x)}" cy="${f(y)}" rx="3" ry="7" transform="rotate(${a} ${f(x)} ${f(y)})" fill="#e0a800"/>`});
     return `<g transform="translate(${cx} ${cy}) rotate(${rot}) scale(${sc})"><g transform="scale(1 .8)">${p}<circle r="15" fill="url(#thr)"/><g class="stamen" style="--d:${f(d+1)}s">${s}</g></g></g>`;
   }
-  const bud=(x,y,r,sc,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${sc})"><g class="bd" style="--d:${d}s"><path d="M0 0C-20-10-26-60-6-100C-2-110 2-116 4-126C8-114 12-108 14-98C30-60 22-10 0 0Z" fill="url(#bg)" stroke="#8db6f2" stroke-width="1.4"/><path d="M4-124C6-80 4-40 2-6" fill="none" stroke="#a9ccff" stroke-opacity=".7" stroke-width="2"/></g></g>`;
+  const bud=(x,y,r,sc,d)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${sc})"><g class="bd" style="--d:${d}s"><path d="M0 0C-20-10-26-60-6-100C-2-110 2-116 4-126C8-114 12-108 14-98C30-60 22-10 0 0Z" fill="url(#bg)" stroke="#ff9aab" stroke-width="1.4"/><path d="M4-124C6-80 4-40 2-6" fill="none" stroke="#ffc2cd" stroke-opacity=".7" stroke-width="2"/></g></g>`;
   const leaf=(x,y,a,L,d)=>{const w=f(L*.22);return `<g transform="translate(${x} ${y}) rotate(${a})"><g class="lf" style="--d:${d}s"><path d="M0 0C-${w}-${f(L*.3)}-${f(w*.8)}-${f(L*.7)} 0-${L}C${f(w*.8)}-${f(L*.7)} ${w}-${f(L*.3)} 0 0Z" fill="url(#gl)"/><path d="M0-6L0-${L-12}" stroke="#7fb06a" stroke-opacity=".55" stroke-width="1.4"/></g></g>`};
   function gyp(cx,cy,rx,ry,n,d0){
     let o='';
@@ -175,33 +196,44 @@ $('#flowers-button').addEventListener('click',()=>{
     return o;
   }
   
-  let svg='<svg viewBox="0 0 736 760" role="img" aria-label="Ramo de lirios azules con nube"><defs>'
-   +'<linearGradient id="lp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#6aa0ea"/><stop offset=".45" stop-color="#4a86dc"/><stop offset="1" stop-color="#8dbcf7"/></linearGradient>'
-   +'<linearGradient id="bg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#4379d2"/><stop offset="1" stop-color="#8dbcf7"/></linearGradient>'
-   +'<radialGradient id="thr"><stop offset="0" stop-color="#e8f4e0"/><stop offset="1" stop-color="#e8f4e0" stop-opacity="0"/></radialGradient>'
+  let svg='<svg viewBox="0 0 736 760" role="img" aria-label="Ramo de flores rojas"><defs>'
+   +'<linearGradient id="lp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e5384f"/><stop offset=".45" stop-color="#c1122f"/><stop offset="1" stop-color="#ff7a8f"/></linearGradient>'
+   +'<linearGradient id="bg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#a50d28"/><stop offset="1" stop-color="#ff7a8f"/></linearGradient>'
+   +'<radialGradient id="thr"><stop offset="0" stop-color="#fff0c9"/><stop offset="1" stop-color="#fff0c9" stop-opacity="0"/></radialGradient>'
    +'<linearGradient id="gl" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2b5a2d"/><stop offset="1" stop-color="#4f8540"/></linearGradient>'
-   +'<linearGradient id="po" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a6bb0"/><stop offset="1" stop-color="#2c4a8c"/></linearGradient>'
-   +'<linearGradient id="pi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#cdd6ee"/><stop offset="1" stop-color="#9eaed4"/></linearGradient>'
+   +'<linearGradient id="po" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a0153a"/><stop offset="1" stop-color="#5c0a1e"/></linearGradient>'
+   +'<linearGradient id="pi" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe0e5"/><stop offset="1" stop-color="#f7a8b8"/></linearGradient>'
    +'<g id="gf"><g fill="#fff" stroke="#d5deef" stroke-width=".6"><circle cx="0" cy="-4" r="3.2"/><circle cx="3.8" cy="-1.2" r="3.2"/><circle cx="2.4" cy="3.2" r="3.2"/><circle cx="-2.4" cy="3.2" r="3.2"/><circle cx="-3.8" cy="-1.2" r="3.2"/></g><circle r="1.8" fill="#e9d98a"/></g>'
    +'<filter id="rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="3" seed="6"/><feDisplacementMap in="SourceGraphic" scale="16" result="d"/><feDropShadow in="d" dx="0" dy="6" stdDeviation="6" flood-color="#1b2f60" flood-opacity=".3"/></filter></defs><g class="sway">';
-  svg+='<g filter="url(#rough)"><path class="paper" style="--d:.1s" d="M32 165L62 128L120 118L190 105L245 78L300 52L420 28L548 12L588 60L604 140L645 200L706 228L690 300L650 390L590 470L520 520L470 530L330 515L240 470L130 400L70 310L40 240Z" fill="url(#po)"/><path class="paper" style="--d:.25s" d="M122 190L200 100L330 110L520 120L620 175L628 300L560 400L470 480L400 505L290 440L180 360L128 270Z" fill="url(#pi)" stroke="#dbe3f4" stroke-width="6" stroke-linejoin="round" opacity=".92"/></g>';
+  svg+='<g filter="url(#rough)"><path class="paper" style="--d:.1s" d="M32 165L62 128L120 118L190 105L245 78L300 52L420 28L548 12L588 60L604 140L645 200L706 228L690 300L650 390L590 470L520 520L470 530L330 515L240 470L130 400L70 310L40 240Z" fill="url(#po)"/><path class="paper" style="--d:.25s" d="M122 190L200 100L330 110L520 120L620 175L628 300L560 400L470 480L400 505L290 440L180 360L128 270Z" fill="url(#pi)" stroke="#fff0f2" stroke-width="6" stroke-linejoin="round" opacity=".92"/></g>';
   [[365,185,-50,95,.5],[515,215,55,75,.6],[370,430,-80,105,.7],[450,390,78,120,.8],[440,340,40,80,.9]].forEach(a=>svg+=leaf(...a));
   [['M415 490Q380 420 300 312',.7],['M420 490Q430 380 455 238',.8],['M410 490Q385 300 365 165',.9],['M412 490Q405 450 395 395',.85]].forEach(([d,t])=>svg+=`<path class="stem" pathLength="1" style="--d:${t}s" d="${d}"/>`);
   svg+=gyp(235,200,75,65,14,1.3)+gyp(575,265,32,42,8,1.5)+gyp(435,108,32,22,7,1.6);
   svg+=bud(365,165,-3,1,1.2)+bud(264,249,-55,.85,1.3)+bud(470,224,30,.85,1.4)+bud(447,403,40,.75,1.5);
   svg+=lily(455,238,15,.95,1.8)+lily(300,312,-15,1,2.3)+lily(395,395,-150,.85,2.6,1);
   
-  svg+='<g filter="url(#rough)"><path class="paper" style="--d:.3s" d="M335 505L470 520L520 540L545 600L560 640L535 690L540 735L430 742L380 722L330 735L318 650L345 600L330 540Z" fill="url(#po)"/><path class="paper" style="--d:.4s" d="M350 600L380 580L400 640L372 700L340 690Z M470 590L520 620L500 690L520 730L470 720Z" fill="#5a78b8" opacity=".55"/></g>';
-  svg+='<g fill="none" stroke="#7bc4ee" stroke-width="7" stroke-linecap="round"><g class="bow" style="--d:3.6s"><path d="M440 525C380 515 300 540 282 575C300 595 400 560 440 535M440 525C490 505 540 530 520 575C480 585 455 560 440 535"/><path d="M435 535C415 600 420 660 418 720M445 535C430 590 395 640 372 690"/><circle cx="440" cy="530" r="7" fill="#7bc4ee" stroke="none"/></g></g>';
+  svg+='<g filter="url(#rough)"><path class="paper" style="--d:.3s" d="M335 505L470 520L520 540L545 600L560 640L535 690L540 735L430 742L380 722L330 735L318 650L345 600L330 540Z" fill="url(#po)"/><path class="paper" style="--d:.4s" d="M350 600L380 580L400 640L372 700L340 690Z M470 590L520 620L500 690L520 730L470 720Z" fill="#d3405d" opacity=".55"/></g>';
+  svg+='<g fill="none" stroke="#ffd36b" stroke-width="7" stroke-linecap="round"><g class="bow" style="--d:3.6s"><path d="M440 525C380 515 300 540 282 575C300 595 400 560 440 535M440 525C490 505 540 530 520 575C480 585 455 560 440 535"/><path d="M435 535C415 600 420 660 418 720M445 535C430 590 395 640 372 690"/><circle cx="440" cy="530" r="7" fill="#ffd36b" stroke="none"/></g></g>';
   svg+='</g></svg>';
   $('#garden').innerHTML=svg;
   let sp;
   $('#flowers-button').addEventListener('click',()=>{
     clearInterval(sp);
     sp=setInterval(()=>{
-      const s=document.createElement('i');s.className='sp';
+      const s=document.createElement('i');s.className='sp';s.textContent=Math.random()>.5?'\u2764':'\u2665';
       s.style.cssText=`left:${8+Math.random()*84}vw;top:${40+Math.random()*55}vh;--z:${2+Math.random()*4}px;--t:${4+Math.random()*4}s;--dx:${(Math.random()-.5)*60}px`;
       document.body.append(s);setTimeout(()=>s.remove(),8500);
     },320);
   });
+})();
+
+/* Corazones flotando de fondo */
+(function(){
+  const box=document.getElementById('hearts-bg');if(!box)return;
+  const n=innerWidth<600?14:24,cols=['#ff4d6d','#d90429','#ff758f','#ff2e63','#ffb3c1'];
+  for(let i=0;i<n;i++){
+    const h=document.createElement('i');h.textContent=i%3?'\u2764':'\u2665';
+    h.style.cssText=`left:${Math.random()*100}%;--s:${12+Math.random()*28}px;--t:${10+Math.random()*10}s;--d:${-Math.random()*16}s;--x:${(Math.random()-.5)*80}px;--o:${.25+Math.random()*.45};--c:${cols[i%cols.length]}`;
+    box.append(h);
+  }
 })();

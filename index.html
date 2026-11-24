@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#10152f">
+  <meta name="theme-color" content="#9bc9e8">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;1,500&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
   <title>Una sorpresa para nuestros 11 meses</title>
   <style>
     :root { color-scheme:dark; --ink:#fff8e9; --gold:#ffd36b; --pink:#ff8eae; }
     * { box-sizing:border-box }
     body { margin:0; min-height:100vh; overflow-x:hidden; color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:#050509; transition:background-color 1s,color 1s; }
-    body.lights-on { color:#46354e; background-color:#17152f; background-image:url("assets/Nubes bajo el atardecer compu.png"); background-position:center; background-size:cover; background-attachment:fixed; }
+    body.lights-on { color:#46354e; background-color:#17152f; background-position:center; background-size:cover; background-attachment:fixed; }
     body.dedication-mode, body.flower-mode { color:#fff8e9; background:#050509; background-image:none; }
     main { position:relative; z-index:1; min-height:100vh; display:grid; place-items:center; padding:30px 18px 80px; text-align:center; }
     .room { width:min(100%,680px); }
@@ -86,7 +87,7 @@
     .flowers.open .pollen { animation:appear .5s ease 1.1s forwards; }
     @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important } }
     @media (max-width:600px) { .balloon { top:8%; width:clamp(70px,19vw,115px); opacity:.78; } .flag { width:38vw; } }
-    @media (max-width:600px) { body.lights-on { background-image:url("assets/Nubes bajo el atardecer celu.png"); } .scene-character { bottom:calc(8px + env(safe-area-inset-bottom,0px)); width:clamp(210px,60vw,300px); } .scene-penguin { max-height:42vh; } }
+    @media (max-width:600px) { body.lights-on { background-image:none; } .scene-character { bottom:calc(8px + env(safe-area-inset-bottom,0px)); width:clamp(210px,60vw,300px); } .scene-penguin { max-height:42vh; } }
     #music { position:fixed; z-index:6; right:12px; bottom:calc(12px + env(safe-area-inset-bottom,0px)); width:48px; height:48px; padding:0!important; display:grid; place-items:center; color:#49374f!important; background:#ffffffd9!important; }
     #music svg { width:24px; height:24px; fill:currentColor }
     #music .off { display:none } #music.muted .on { display:none } #music.muted .off { display:inline }
@@ -150,37 +151,132 @@
     @keyframes sway { from { transform:rotate(-1deg) } to { transform:rotate(1deg) } }
     .sp { position:fixed; z-index:3; width:var(--z); height:var(--z); border-radius:50%; background:#8fb8ff; box-shadow:0 0 9px #a8c8ff; pointer-events:none; opacity:0; animation:rise var(--t) ease-out forwards }
     @keyframes rise { 0% { opacity:0; transform:translate(0,0) } 20% { opacity:.9 } 100% { opacity:0; transform:translate(var(--dx),-38vh) } }
+
+    /* ============ DISEÑO ROMÁNTICO · ROJO Y CORAZONES ============ */
+    :root { --red:#c77b91; --red-d:#416c96; --rose:#e998ad; --blush:#f7d9db; --wine:#26394d; --script:'Great Vibes','Brush Script MT',cursive; --serif:'Playfair Display',Georgia,'Times New Roman',serif; }
+    body { font-family:'Quicksand',system-ui,-apple-system,'Segoe UI',sans-serif; background:radial-gradient(ellipse at 50% 105%,#354e68 0%,#26394d 55%,#182332 100%) fixed; }
+    body.lights-on::before { content:''; position:fixed; inset:0; z-index:0; pointer-events:none; background:linear-gradient(180deg,#6fa6d02b 0%,transparent 42%,#ffb1bd35 100%),radial-gradient(ellipse at 50% 100%,#ffd27a44 0%,transparent 58%); }
+    body.lights-on { color:#243c58; }
+
+    /* corazones flotando de fondo */
+    .hearts-bg { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+    .hearts-bg i { position:absolute; bottom:-12vh; font-style:normal; color:var(--c,#e998ad); font-size:var(--s,20px); opacity:0; text-shadow:0 0 12px #e998ad88; animation:heart-up var(--t,12s) linear var(--d,0s) infinite; }
+    @keyframes heart-up { 0% { transform:translate(0,0) rotate(-10deg) scale(.8); opacity:0 } 12% { opacity:var(--o,.55) } 50% { transform:translate(var(--x,20px),-55vh) rotate(12deg) scale(1) } 90% { opacity:var(--o,.55) } 100% { transform:translate(calc(var(--x,20px)*-1),-118vh) rotate(-8deg) scale(1.15); opacity:0 } }
+    .lights-on .hearts-bg i { text-shadow:0 0 10px #fff8; }
+    .flower-mode .hearts-bg i { --c:#e998ad; }
+
+    /* frases y globos de diálogo */
+    .lights-on .intro { border-color:#f3c86b; color:#29486b; background:#fff9eaf0; box-shadow:0 8px 28px #274b6955; font-weight:700; }
+    .penguin-greeting { border-color:#f3c86b; color:#29486b; background:#fff9e9; box-shadow:0 6px 22px #274b6955; font-family:'Quicksand',sans-serif; }
+    .penguin-greeting::after { content:' ❤'; color:#e77f9c; }
+    .lamp { filter:drop-shadow(0 0 26px #f3c86bcc); }
+    .lamp:hover { filter:drop-shadow(0 0 40px #f3c86b); }
+    .hint { color:#fff0c2; }
+    .lights-on .hint { color:#fff9ed; text-shadow:0 1px 8px #29486b; }
+
+    /* botones */
+    .invitation button.primary, .gift-button, .dedications #flowers-button { color:#29486b!important; border:2px solid #f3c86b!important; background:linear-gradient(135deg,#ffe39a,#b8dcf2 55%,#f7b6c6)!important; box-shadow:0 0 26px #f3c86b66,0 10px 26px #29486b44!important; letter-spacing:.02em; }
+    .invitation button.primary:hover, .gift-button:hover, .dedications #flowers-button:hover { background:linear-gradient(135deg,#ffebbb,#c8e8f8 55%,#ffc8d3)!important; }
+    .invitation #no { color:#29486b!important; background:#fff9ed!important; border:2px solid #f3c86b!important; box-shadow:0 6px 18px #29486b44!important; }
+    .invitation #no:hover { background:#eaf6fc!important; }
+    .invitation button#yes { animation:beat 1.6s ease-in-out infinite; }
+    .gift-button { animation:beat 1.8s ease-in-out infinite; }
+    @keyframes beat { 0%,100% { transform:scale(1) } 14% { transform:scale(1.07) } 28% { transform:scale(1) } 42% { transform:scale(1.05) } 70% { transform:scale(1) } }
+    #music { color:#416c96!important; background:#fff9e9e6!important; box-shadow:0 4px 16px #29486b55; }
+
+    /* sobre */
+    .envelope-button { box-shadow:none; filter:drop-shadow(0 12px 30px #ff1744aa); animation:appear .8s ease both,env-float 3s ease-in-out .8s infinite; position:relative; }
+    @keyframes env-float { 50% { transform:translateY(-8px) rotate(-1deg) } }
+    .envelope-button::after { content:'❤'; position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); font-size:clamp(1.4rem,6vw,2.2rem); color:#fff; text-shadow:0 0 14px #ff1744,0 2px 4px #9d020899; animation:beat 1.4s ease-in-out infinite; pointer-events:none; }
+
+    /* LA CARTA */
+    .lights-on .card { background:linear-gradient(160deg,#fffdf5 0%,#fff8e9 45%,#e9f6fc 100%); border:2px solid #f3c86b; box-shadow:0 0 0 6px #ffffff66,0 20px 60px #29486b55,inset 0 0 40px #f3c86b22; }
+    .card::before, .card::after { content:''; position:absolute; inset:10px; border:1.5px dashed #78a9d288; border-radius:20px; pointer-events:none; }
+    .card::after { inset:auto; content:'❤'; right:16px; bottom:10px; border:0; color:#e77f9c; font-size:1.4rem; opacity:.75; animation:beat 2s infinite; }
+    .card-confetti { opacity:.22; filter:hue-rotate(-30deg) saturate(1.3); }
+    .cake-wrap { position:relative; filter:drop-shadow(0 8px 18px #9d020855); animation:float 3s ease-in-out infinite; }
+    .cake { border-radius:50%; }
+    .ring-heart { position:absolute; z-index:2; color:var(--red); text-shadow:0 0 10px #fff,0 2px 8px #ff4d6d99; animation:beat 1.6s ease-in-out infinite; pointer-events:none; }
+    .ring-heart.h1 { top:-8%; left:-12%; font-size:1.7rem } .ring-heart.h2 { top:6%; right:-14%; font-size:1.2rem; animation-delay:-.5s; color:#ff4d6d } .ring-heart.h3 { bottom:2%; left:-10%; font-size:1.1rem; animation-delay:-1s; color:#ff758f }
+    .recipient { font-family:var(--script); font-weight:400; color:#c77b91; font-size:clamp(2.3rem,10vw,3.7rem); line-height:1.1; text-shadow:0 2px 0 #fff,0 4px 16px #e77f9c44; margin:12px 0 4px; }
+    .lights-on .recipient { color:#c77b91; }
+    .divider { display:flex; align-items:center; justify-content:center; gap:12px; margin:10px auto 14px; color:#6d9fc7; max-width:260px; }
+    .divider span { flex:1; height:1.5px; background:linear-gradient(90deg,transparent,#f3c86b); } .divider span:last-child { background:linear-gradient(270deg,transparent,#f3c86b); }
+    .message { font-family:var(--serif); font-style:italic; font-size:clamp(1.02rem,3.6vw,1.18rem); line-height:1.85; color:#344b64; }
+    .signature, .lights-on .signature { font-family:var(--script); font-style:normal; color:#6d9fc7; font-size:clamp(1.8rem,7vw,2.4rem); margin:8px 0 0; }
+    .confetti { font-style:normal; line-height:1; }
+
+    /* Dedicatorias (recolor) */
+    body.dedication-mode { background:linear-gradient(160deg,#fff4f4 0%,#ffd6dc 55%,#ffb3c1 100%) fixed; }
+    .dedications h2 { color:var(--red); font-family:var(--script); font-style:normal; font-weight:400; font-size:clamp(2.2rem,9vw,3.6rem); }
+    .dedications h2::after { background:linear-gradient(90deg,#ff758f,#d90429,#ff758f); }
+    .dedication-note, .dedication-note:nth-child(3n+2), .dedication-note:nth-child(3n) { --ac:#e63956; }
+    .dedication-note:nth-child(3n+2) { --ac:#c9184a; } .dedication-note:nth-child(3n) { --ac:#ff758f; }
+    .car-ctrl button { color:var(--red)!important; border-color:var(--red)!important; } .dot { background:#d9042940!important; } .dot.on { background:var(--red)!important; }
+
+    /* RAMO DE FLORES ROJAS */
+    body.flower-mode { background:radial-gradient(ellipse at 50% 35%,#fffafa 0%,#ffe3e8 50%,#ffb3c1 100%) fixed; }
+    .flowers h2 { color:var(--red); font-family:var(--script); font-style:normal; font-weight:400; font-size:clamp(2.2rem,9vw,3.6rem); text-shadow:0 2px 14px #fff; }
+    .rose-dog { width:clamp(120px,30vw,190px); height:auto; margin:6px 0 0; opacity:0; filter:drop-shadow(0 10px 16px #9d020844); }
+    .flowers.open .rose-dog { animation:fade 1.2s .8s forwards,float 3s ease-in-out 2s infinite; }
+    .flowers-note { margin:2px 0 8px; font-family:var(--serif); font-style:italic; color:#8a1230; font-size:clamp(1rem,3.6vw,1.2rem); opacity:0; }
+    .flowers.open .flowers-note { animation:fade 1.2s 1.4s forwards; }
+    .sp { width:auto; height:auto; font-size:calc(var(--z)*4); line-height:1; border-radius:0; background:none; box-shadow:none; color:#ff3d63; text-shadow:0 0 8px #ff8fa3; }
+    @media (max-width:600px) { .ring-heart.h1 { left:-6% } .ring-heart.h2 { right:-8% } .ring-heart.h3 { left:-4% } }
+    .penguin-greeting { white-space:normal!important; text-align:center; max-width:min(90vw,430px); transition:opacity .35s,transform .45s; }
+    .penguin-greeting.swap { opacity:0; transform:translateY(6px) scale(.96); }
+    .scene-character .invitation { pointer-events:auto; margin:0 0 12px; }
+    .scene-character .invitation button { min-width:92px; }
+    /* fondo de luz encendida (antes del Sí) y atardecer (después del Sí) */
+    body.lights-on { background-image:url("assets/Nubes bajo el atardecer compu.png"); background-size:cover; background-position:center; background-attachment:fixed; }
+    @media (max-width:600px) { body.lights-on { background-image:url("assets/Nubes bajo el atardecer celu.png"); background-position:center; } }
+    .sunset .scene-character { top:auto; bottom:8px; left:auto; right:2vw; width:clamp(135px,22vw,220px); transform:none; visibility:visible; opacity:1; z-index:0; }
+    .sunset .scene-penguin { display:block; max-height:34vh; }
+    .sunset .envelope-button { margin:0 auto 8px; }
+    .sunset .envelope-prompt { display:table; margin:0 auto 12px; }
+    /* botón No que escapa */
+    #no { color:#c9184a!important; background:#fff!important; border:2px solid #ffb3c1!important; box-shadow:0 6px 18px #6a001655!important; min-width:92px; transition:left .22s ease,top .22s ease,transform .15s; }
+    /* escena final: perrito grande */
+    .garden { display:none!important; }
+    .flowers { justify-content:center; text-align:center; }
+    .rose-dog { width:auto; height:auto; max-width:min(100vw,850px); max-height:86vh; margin:0; transform:scale(.2); transform-origin:bottom center; }
+    .flowers.open .rose-dog { animation:dog-pop 1.1s cubic-bezier(.3,1.5,.5,1) .5s forwards,float 3s ease-in-out 1.8s infinite; }
+    @keyframes dog-pop { 0% { opacity:0; transform:scale(.2) rotate(-8deg) } 100% { opacity:1; transform:scale(1) rotate(0) } }
+    .flowers-note { font-family:var(--script); font-style:normal; font-size:clamp(1.8rem,7vw,2.4rem); color:var(--red); }
+    /* los botones del pingüino deben quedar por encima de la capa principal */
+    .scene-character { z-index:3; }
+    .show-letter .scene-character { visibility:visible; opacity:1; }
+    .card:not(.show) { pointer-events:none; }
   </style>
 </head>
 <body>
+  <div class="hearts-bg" id="hearts-bg" aria-hidden="true"></div>
   <div class="scene-character" aria-live="polite">
-    <p class="penguin-greeting">Hola Hardy, soy Doffi</p>
-    <img class="scene-penguin" src="assets/Pingüino pastel con capucha de conejo.png" alt="Pingüino pastel con capucha de conejo">
+    <p class="penguin-greeting" id="penguin-say">Hola Hardy, soy Doffi</p>
+    <div class="invitation" id="invitation" hidden>
+        <button class="primary" id="yes" type="button">S&#237;</button>
+        <button id="no" type="button">No </button>
+      </div>
+    <img class="scene-penguin" src="assets/pinguino.png" alt="Pingüino pastel con capucha de conejo">
   </div>
-  <img class="decoration flag left" src="assets/flag-left.png" alt="" aria-hidden="true">
-  <img class="decoration flag right" src="assets/flag-right.png" alt="" aria-hidden="true">
-  <img class="decoration balloon left" src="assets/balloon-left.png" alt="" aria-hidden="true">
-  <img class="decoration balloon right" src="assets/balloon-right.png" alt="" aria-hidden="true">
   <main>
     <section class="room" aria-live="polite">
       <p class="intro" id="intro" aria-live="polite"></p>
       <button class="lamp" id="lights" type="button" aria-label="Prender la luz" hidden><img src="assets/bulb.svg" alt="Foquito"></button>
-      <div class="invitation" id="invitation" hidden>
-        <button class="primary" id="yes" type="button">S&#237;</button>
-        <button id="no" type="button">No </button>
-      </div>
       <button class="envelope-button" id="envelope" type="button" aria-label="Abrir la carta" hidden><img src="assets/sobre-magico.png" alt="Una carta de Susan para ti; toca para abrirla"></button>
       <article class="card" id="card">
         <img class="card-confetti" src="assets/confetti.svg" alt="" aria-hidden="true">
         <div class="card-content">
-          <div class="cake-wrap"><img class="cake" src="assets/Pareja.png" alt="Ilustración de una pareja"></div>
-          <div class="recipient" id="recipient">&#161;Felices 11 meses, mi amor!</div>
+          <div class="cake-wrap"><span class="ring-heart h1">❤</span><span class="ring-heart h2">❤</span><span class="ring-heart h3">♥</span><img class="cake" src="assets/Pareja.png" alt="Ilustración de una pareja"></div>
+          <div class="divider" aria-hidden="true"><span></span>❤<span></span></div>
+          <div class="recipient" id="recipient">&#161;Felices 11 meses, mi amor! ❤</div>
           <p class="message">Amor mío, estos 11 meses a tu lado han sido de mis momentos más bonitos. Gracias por cada risa, cada abrazo y por quererme tal como soy. A tu lado, hasta lo más sencillo se vuelve especial. Qué suerte la mía de compartir este camino contigo. Te amo y deseo que nos esperen muchísimos meses más juntitos.</p>
-          <p class="signature">Con todo mi amor, Susan</p>
+          <div class="divider" aria-hidden="true"><span></span>❤<span></span></div>
+          <p class="signature">Con todo mi amor, Susan ❤</p>
         </div>
       </article>
     <div class="actions">
-        <button class="gift-button" id="party" type="button" hidden>Ver tus flores <span aria-hidden="true">💐</span></button>
+        <button class="gift-button" id="party" type="button" hidden>Ver tus flores <span aria-hidden="true">🌹</span></button>
       </div>
       <p class="hint" id="hint" hidden>Haz clic en el foquito para prenderla.</p>
     </section>
@@ -192,8 +288,9 @@
       <button class="primary" id="flowers-button" type="button">Ver tus flores </button>
     </section>
     <section class="flowers" id="flowers" hidden>
-      <h2>Para mi amor, con todo mi corazón</h2>
-      <div class="garden" id="garden" aria-label="Ramo de lirios azules"></div>
+      <h2>Rosas para el caballero ❤</h2>
+      <img class="rose-dog" src="assets/perrito.png" alt="Un perrito salchicha con un ramo de rosas rojas">
+      <div class="garden" id="garden" aria-label="Ramo de flores rojas"></div>
     </section>
 <button id="music" type="button" aria-label="Activar m&uacute;sica"><svg class="on" viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h5V3z"/></svg><svg class="off" viewBox="0 0 24 24"><path d="M12 3v10.6A4 4 0 1 0 14 17V7h5V3zM3.3 2 2 3.3l18.7 18.7 1.3-1.3z"/></svg></button>
   </main>
