@@ -7,11 +7,11 @@ function penguinTalk(text){
   penguinSay.textContent=text;
   penguinSay.setAttribute('aria-atomic','true');
 }
-const lightsButton=$('#lights'),partyButton=$('#party'),card=$('#card'),intro=$('#intro'),envelope=$('#envelope'),invitation=$('#invitation'),yesButton=$('#yes'),noButton=$('#no'),hint=$('#hint'),room=$('.room'),dedications=$('#dedications'),flowers=$('#flowers'),musicBtn=$('#music');
+const lightsButton=$('#lights'),partyButton=$('#party'),card=$('#card'),intro=$('#intro'),envelope=$('#envelope'),invitation=$('#invitation'),yesButton=$('#yes'),noButton=$('#no'),hint=$('#hint'),room=$('.room'),dedications=$('#dedications'),flowers=$('#flowers'),musicBtn=$('#music'),nextLetterButton=$('#next-letter');
 
 let sayTimer;
 const introTimers=[];
-let invitationTimer;
+let invitationTimer,dedicationTimer;
 function say(text){
   clearTimeout(sayTimer);
   intro.classList.remove('show');
@@ -50,16 +50,19 @@ lightsButton.addEventListener('click',()=>{
   introTimers.forEach(clearTimeout);
   clearTimeout(sayTimer);
   clearTimeout(invitationTimer);
+  clearTimeout(dedicationTimer);
   document.body.classList.add('lights-on');
   penguinTalk('Hola Hardy, soy Doffi');
   clearTimeout(sayTimer);intro.classList.remove('show');intro.textContent='';
   hint.hidden=true;lightsButton.hidden=true;
   if(!playing)toggleMusic(true);
-  invitationTimer=setTimeout(()=>{
-    invitation.hidden=true;
-    penguinTalk('Tengo una carta de Susan para ti, jeje. ¿Quieres leerla?');
-    invitation.hidden=false;
-  },4000);
+  invitationTimer=setTimeout(()=>penguinTalk('Tengo un mensajito de Susan para ti.'),4000);
+  dedicationTimer=setTimeout(()=>{
+    document.body.classList.remove('lights-on','sunset','show-letter');
+    document.body.classList.add('dedication-mode');
+    room.hidden=true;dedications.hidden=false;nextLetterButton.hidden=true;
+    track.scrollLeft=0;show(0);scrollTo({top:0,behavior:'smooth'});
+  },10000);
 });
 
 function moveNoButton(){
@@ -110,15 +113,16 @@ const notes=cards.map(c=>{const p=c.querySelector('p'),text=p.textContent;
 cards.forEach((_,i)=>{const b=document.createElement('button');b.type='button';b.className='dot';b.setAttribute('aria-label','Tarjeta '+(i+1));
   b.onclick=()=>go(i);dots.append(b)});
 let cur=0;
-function typewrite(n,speed=38){
+function typewrite(n,speed=38,onDone){
   if(n.done)return;n.done=true;const ch=[...n.text],t=n.p.firstChild,box=n.p.closest('.dedication-note');let i=0;
-  (function step(){if(i<ch.length){i++;t.textContent=ch.slice(0,i).join('');if(box.scrollHeight>box.clientHeight)box.scrollTop=box.scrollHeight;setTimeout(step,speed)}})();
+  (function step(){if(i<ch.length){i++;t.textContent=ch.slice(0,i).join('');if(box.scrollHeight>box.clientHeight)box.scrollTop=box.scrollHeight;setTimeout(step,speed)}else onDone?.()})();
 }
 function show(i){
   cur=i;[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
   $('#prev').disabled=i===0;$('#next').disabled=i===cards.length-1;
   cards.forEach((c,k)=>c.classList.toggle('active',k===i));
-  setTimeout(()=>typewrite(notes[i]),350);
+  nextLetterButton.hidden=true;
+  setTimeout(()=>typewrite(notes[i],38,()=>{nextLetterButton.hidden=false}),350);
 }
 function go(i){i=Math.max(0,Math.min(cards.length-1,i));cards[i].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});show(i)}
 let st;track.addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(()=>{
@@ -127,10 +131,17 @@ let st;track.addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(()=>{
   if(best!==cur)show(best)},80)});
 $('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
 partyButton.addEventListener('click',()=>{
-  document.body.classList.remove('lights-on','sunset','show-letter');
-  document.body.classList.add('dedication-mode');
-  room.hidden=true;dedications.hidden=false;
-  track.scrollLeft=0;show(0);
+  $('#flowers-button').click();
+});
+
+nextLetterButton.addEventListener('click',()=>{
+  dedications.hidden=true;
+  document.body.classList.remove('dedication-mode','sunset','show-letter');
+  document.body.classList.add('lights-on');
+  room.hidden=false;hint.hidden=true;envelope.hidden=true;card.classList.remove('show');
+  penguinSay.hidden=false;penguinSay.classList.remove('envelope-prompt');
+  penguinTalk('Tengo una carta de Susan para ti, jeje. ¿Quieres leerla?');
+  invitation.hidden=false;noButton.hidden=false;
   scrollTo({top:0,behavior:'smooth'});
 });
 

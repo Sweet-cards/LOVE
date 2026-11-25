@@ -104,6 +104,8 @@
     .dedications.single-message .carousel { max-height:60vh; overflow:auto; padding:6px 1%; }
     .dedications.single-message .dedication-note { flex-basis:100%; max-height:58vh; overflow-y:auto; opacity:1; transform:none; }
     .dedications.single-message .car-ctrl { display:none; }
+    .dedications.single-message > h2 { color:#fff!important; text-shadow:0 2px 12px #243c58aa; }
+    #next-letter { display:block; margin:18px auto 0; }
     .car-ctrl { display:flex; align-items:center; justify-content:center; gap:16px; margin:16px 0 22px }
     .car-ctrl button { width:44px; height:44px; padding:0!important; font-size:1.8rem; line-height:1; color:#fff!important; background:#111!important; border:1px solid #ffffff55!important }
     .car-ctrl button:disabled { opacity:.35; cursor:default; transform:none!important }
@@ -283,12 +285,12 @@
         </div>
       </article>
     <div class="actions">
-        <button class="gift-button" id="party" type="button" hidden>Leer mi mensaje <span aria-hidden="true">💌</span></button>
+        <button class="gift-button" id="party" type="button" hidden>Ver las florecitas <span aria-hidden="true">🌹</span></button>
       </div>
       <p class="hint" id="hint" hidden>Haz clic en el foquito para prenderla.</p>
     </section>
     <section class="dedications single-message" id="dedications" hidden>
-      <h2>Una cartita para ti</h2>
+      <h2>Un mensajito para ti </h2>
       <div class="carousel" id="carousel"><article class="dedication-note"><h3>Con mucho cariño</h3><p>PARA MI GUAPO!!
 
 Coincidir contigo fue uno de los regalos más bonitos que me dio la vida. El primer día que te vi pensé: ¿quién será este creído? Pero con el tiempo te fui conociendo más y, poco a poco, me di cuenta de que había algo en ti que me atraía demasiado, algo que no podía ignorar.
@@ -299,7 +301,8 @@ Me encanta lo bonito que estamos construyendo juntos, con respeto y con mucho ca
 
 Y RECUERDAAA!!
 Si no es conmigo no es con nadie, porque donde vayas Chucky te encontrará JAJAJA</p></article></div><div class="car-ctrl"><button id="prev" type="button" aria-label="Anterior">&#8249;</button><div id="dots"></div><button id="next" type="button" aria-label="Siguiente">&#8250;</button></div>
-      <button class="primary" id="flowers-button" type="button">Ver tus flores </button>
+      <button class="primary" id="next-letter" type="button" hidden>Una cartita más 💌</button>
+      <button class="primary" id="flowers-button" type="button" hidden>Ver tus flores</button>
     </section>
     <section class="flowers" id="flowers" hidden>
       <h2>Rosas para el caballero ❤</h2>
