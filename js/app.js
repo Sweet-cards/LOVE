@@ -106,13 +106,13 @@ envelope.addEventListener('click',()=>{
 /* Dedicatorias: carrusel + maquina de escribir */
 const track=$('#carousel'),cards=[...track.children],dots=$('#dots');
 const notes=cards.map(c=>{const p=c.querySelector('p'),text=p.textContent;
-  p.innerHTML='<span class="t"></span><span class="r"></span>';p.lastChild.textContent=text;return{p,text,done:false}});
+  p.innerHTML='<span class="t"></span>';return{p,text,done:false}});
 cards.forEach((_,i)=>{const b=document.createElement('button');b.type='button';b.className='dot';b.setAttribute('aria-label','Tarjeta '+(i+1));
   b.onclick=()=>go(i);dots.append(b)});
 let cur=0;
 function typewrite(n,speed=38){
-  if(n.done)return;n.done=true;const ch=[...n.text],t=n.p.firstChild,r=n.p.lastChild;let i=0;
-  (function step(){if(i<ch.length){i++;t.textContent=ch.slice(0,i).join('');r.textContent=ch.slice(i).join('');setTimeout(step,speed)}})();
+  if(n.done)return;n.done=true;const ch=[...n.text],t=n.p.firstChild,box=n.p.closest('.dedication-note');let i=0;
+  (function step(){if(i<ch.length){i++;t.textContent=ch.slice(0,i).join('');if(box.scrollHeight>box.clientHeight)box.scrollTop=box.scrollHeight;setTimeout(step,speed)}})();
 }
 function show(i){
   cur=i;[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
@@ -127,7 +127,11 @@ let st;track.addEventListener('scroll',()=>{clearTimeout(st);st=setTimeout(()=>{
   if(best!==cur)show(best)},80)});
 $('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
 partyButton.addEventListener('click',()=>{
-  $('#flowers-button').click();
+  document.body.classList.remove('lights-on','sunset','show-letter');
+  document.body.classList.add('dedication-mode');
+  room.hidden=true;dedications.hidden=false;
+  track.scrollLeft=0;show(0);
+  scrollTo({top:0,behavior:'smooth'});
 });
 
 $('#flowers-button').addEventListener('click',()=>{

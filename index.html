@@ -100,6 +100,10 @@
     .dedication-note { flex:0 0 86%; margin:0!important; scroll-snap-align:center; min-height:220px; opacity:.45; transform:scale(.94); transition:opacity .4s,transform .4s }
     .dedication-note.active { opacity:1; transform:none }
     .dedication-note .r { visibility:hidden }
+    .dedication-note p { white-space:pre-wrap; }
+    .dedications.single-message .carousel { max-height:60vh; overflow:auto; padding:6px 1%; }
+    .dedications.single-message .dedication-note { flex-basis:100%; max-height:58vh; overflow-y:auto; opacity:1; transform:none; }
+    .dedications.single-message .car-ctrl { display:none; }
     .car-ctrl { display:flex; align-items:center; justify-content:center; gap:16px; margin:16px 0 22px }
     .car-ctrl button { width:44px; height:44px; padding:0!important; font-size:1.8rem; line-height:1; color:#fff!important; background:#111!important; border:1px solid #ffffff55!important }
     .car-ctrl button:disabled { opacity:.35; cursor:default; transform:none!important }
@@ -231,6 +235,8 @@
     /* fondo de luz encendida (antes del Sí) y atardecer (después del Sí) */
     body.lights-on { background-image:url("assets/Nubes bajo el atardecer compu.png"); background-size:cover; background-position:center; background-attachment:fixed; }
     @media (max-width:600px) { body.lights-on { background-image:url("assets/Nubes bajo el atardecer celu.png"); background-position:center; } }
+    body.dedication-mode { background:#243c58 url("assets/Nubes bajo el atardecer compu.png") center / cover fixed; }
+    @media (max-width:600px) { body.dedication-mode { background-image:url("assets/Nubes bajo el atardecer celu.png"); background-position:center; } }
     .sunset .scene-character { top:auto; bottom:8px; left:auto; right:2vw; width:clamp(135px,22vw,220px); transform:none; visibility:visible; opacity:1; z-index:0; }
     .sunset .scene-penguin { display:block; max-height:34vh; }
     .sunset .envelope-button { margin:0 auto 8px; }
@@ -277,15 +283,22 @@
         </div>
       </article>
     <div class="actions">
-        <button class="gift-button" id="party" type="button" hidden>Ver tus flores <span aria-hidden="true">🌹</span></button>
+        <button class="gift-button" id="party" type="button" hidden>Leer mi mensaje <span aria-hidden="true">💌</span></button>
       </div>
       <p class="hint" id="hint" hidden>Haz clic en el foquito para prenderla.</p>
     </section>
-    <section class="dedications" id="dedications" hidden>
-      <h2>Un recuerdo de estos 11 meses</h2>
-      <div class="carousel" id="carousel"><article class="dedication-note"><h3>Mi lugar feliz</h3><p>Contigo aprendí que hogar puede ser una persona. Gracias por ser mi calma, mi alegría y ese abrazo al que siempre quiero volver.</p></article>
-      <article class="dedication-note"><h3>Mi aventura favorita</h3><p>Ya van 11 meses de historias, risas y momentos nuestros. Sueño con todo lo bonito que todavía nos queda por vivir juntitos.</p></article>
-      <article class="dedication-note"><h3>Siempre tú</h3><p>En los días fáciles y en los no tanto, quiero seguir tomándote de la mano. Te amo por quien eres y por cómo haces florecer mi corazón.</p></article></div><div class="car-ctrl"><button id="prev" type="button" aria-label="Anterior">&#8249;</button><div id="dots"></div><button id="next" type="button" aria-label="Siguiente">&#8250;</button></div>
+    <section class="dedications single-message" id="dedications" hidden>
+      <h2>Una cartita para ti</h2>
+      <div class="carousel" id="carousel"><article class="dedication-note"><h3>Con mucho cariño</h3><p>PARA MI GUAPO!!
+
+Coincidir contigo fue uno de los regalos más bonitos que me dio la vida. El primer día que te vi pensé: ¿quién será este creído? Pero con el tiempo te fui conociendo más y, poco a poco, me di cuenta de que había algo en ti que me atraía demasiado, algo que no podía ignorar.
+
+Intenté negar lo que sentía, intenté alejarme de ti, pero fue en vano. Porque desde entonces, lo único que quiero es decirte todos los días lo mucho que me gustas y lo mucho que te quiero.
+
+Me encanta lo bonito que estamos construyendo juntos, con respeto y con mucho cariño. Y me gustaría que sigamos así, sin prisas, sin presiones, tal vez no para siempre, pero sí hasta que nuestro amor nos lo permita.
+
+Y RECUERDAAA!!
+Si no es conmigo no es con nadie, porque donde vayas Chucky te encontrará JAJAJA</p></article></div><div class="car-ctrl"><button id="prev" type="button" aria-label="Anterior">&#8249;</button><div id="dots"></div><button id="next" type="button" aria-label="Siguiente">&#8250;</button></div>
       <button class="primary" id="flowers-button" type="button">Ver tus flores </button>
     </section>
     <section class="flowers" id="flowers" hidden>
